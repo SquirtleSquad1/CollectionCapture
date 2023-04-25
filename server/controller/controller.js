@@ -3,6 +3,53 @@ const prisma = new PrismaClient()
 
 export default {
 
+  getUser: async (req, res, next) => {
+    const { username, password } = req.query;
+
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          username: username
+        }
+      })
+
+      if (user.password === password) {
+        res.locals.userId = user.id;
+      } else {
+        res.locals.userId = 'bad username/password'
+      }
+      return next()
+    }catch (e){
+    }
+  },
+
+  postUser: async (req, res, next) => {
+    const {username, password} = req.body;
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          username: username
+        }
+      })
+
+      // does not fining a user acutally return a null value? 
+      if (!user) {
+        await prisma.user.create({
+          data: {
+            username: username,
+            password: password
+          }
+        })
+      }
+
+    }catch (e){
+    }
+    
+    try {
+    }catch (e){
+    }
+  },
+
   postCard: async (req, res, next) => {
     const { userId, cardId, imageUrl } = req.body;
 
