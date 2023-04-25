@@ -12,7 +12,7 @@ export default function Home() {
   
   return (
     <main class="full-width">
-      <Card imageUrl={'http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=409741&type=card'}/>
+      <Card id={'testingId'} imageUrl={'http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=409741&type=card'}/>
       <h1>Hello {user()?.username}</h1>
       <h3>This sucks</h3>
       <button onClick={() => refetchRouteData()}>Refresh</button>

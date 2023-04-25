@@ -25,6 +25,7 @@ app.get('/api/getCards', async (req, res, next) => {
 app.post('/api/card', async (req, res, next) => {
   console.log('hit')
   console.log(req.body)
+  res.send('test')
 })
 
 app.use((err, req, res, next) => {
