@@ -1,10 +1,10 @@
 {
   "name": "CollectionCapture",
   "scripts": {
-    "dev": "solid-start dev",
+    "dev": "concurrently \"solid-start dev\" \"npm run server\"",
     "build": "solid-start build",
     "start": "solid-start start",
-    "server": "node server/server.js"
+    "server": "nodemon server/server.js"
   },
   "type": "module",
   "devDependencies": {
