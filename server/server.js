@@ -10,14 +10,15 @@ app.use(express.json());
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/api/getCards', async (req, res) => {
+app.get('/api/getCards', async (req, res, next) => {
+  const { name } = req.query;
   try {
-    const { name } = req.body;
     const cardNames = await mtg.card.where({ name });
+    // console.log(cardNames)
     return res.json(cardNames);
   } catch (error) {
     console.error(error);
-    return res.status(500).send('Server error');
+    return next(error)
   }
 });
 

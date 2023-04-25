@@ -4,7 +4,7 @@
     "dev": "solid-start dev",
     "build": "solid-start build",
     "start": "solid-start start",
-    "server": "node server/server.js"
+    "server": "nodemon server/server.js"
   },
   "type": "module",
   "devDependencies": {
@@ -17,10 +17,12 @@
     "@prisma/client": "^4.9.0",
     "@solidjs/meta": "^0.28.2",
     "@solidjs/router": "^0.8.2",
+    "axios": "^1.3.6",
     "eslint": "^8.39.0",
     "eslint-plugin-solid": "^0.12.1",
     "express": "^4.18.2",
     "mtgsdk": "^1.0.0",
+    "nodemon": "^2.0.22",
     "prisma": "^4.9.0",
     "rollup-plugin-postcss": "^4.0.2",
     "solid-app-router": "^0.4.2",

@@ -23,6 +23,7 @@
 //   );
 // }
 
+import axios from "axios";
 import { createSignal, For } from "solid-js";
 export default function Home() {
   const [cardName, setCardName] = createSignal("");
@@ -31,9 +32,15 @@ export default function Home() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     // handle form submission here, e.g. by pinging the express endpoint
-    await fetch(`/api/getCards?name=${cardName()}`)
-      .then((response) => response.json())
-      .then((data) => setCardData(data));
+    const response = await axios.get("/api/getCards", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      params : {
+        name: cardName()
+      }
+    });
+    setCardData(response.data)
   };
 
   const handleInputChange = (event) => {
@@ -47,7 +54,6 @@ export default function Home() {
         <input
           type="text"
           placeholder="Name of card"
-          value={cardName()}
           onInput={handleInputChange}
         />
         <button type="submit">Search</button>
@@ -57,7 +63,12 @@ export default function Home() {
         {cardData() ? (
           <ul>
             <For each={cardData()}>{(card) => (
-              <li >{card.name}</li>
+              <div>
+                <img src={card.imageUrl} />
+                <h3>{card.name}</h3>
+                <input type="radio" /> Add to deck
+                <input type="radio" /> Add to collection
+              </div>
             )}</For>
           </ul>
         ) : (
