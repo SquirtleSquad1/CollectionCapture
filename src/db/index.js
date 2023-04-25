@@ -1,2 +1,10 @@
 import { PrismaClient } from "@prisma/client";
-export const db = new PrismaClient();
+
+// implementing dependency injection for efficiency
+let prisma;
+export const db = () => {
+  if (!prisma) {
+    prisma = new PrismaClient();
+  }
+  return prisma;
+}
