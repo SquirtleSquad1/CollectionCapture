@@ -15,6 +15,16 @@ app.get('/api/cards', (req, res) => {
         res.status(200).send(results)
       })
 })
+
+app.use((err, req, res, next) => {
+  const error = {
+    message: 'unknown error occured',
+    err: err
+  };
+  res.status(500).send({error, ...err});
+});
+
+
 app.listen(port, () => {
     console.log(`Example app listening at PORT ${port}`)
 })
