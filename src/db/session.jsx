@@ -55,6 +55,7 @@ export async function requireUserId(
   }
   return userId;
 }
+
 export async function getUser(db, request) {
   const userId = await getUserId(request);
   if (typeof userId !== "string") {
