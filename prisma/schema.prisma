@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE")
+  url      = env("DATABASE_URL")
 }
 
 // model List {
@@ -14,17 +14,17 @@ datasource db {
 // }
 
 model User {
-  id String @id @default(uuid())
+  id       String @id @default(uuid())
   username String @unique
-  password String 
-  cards Card[]
+  password String
+  cards    Card[]
 }
 
 model Card {
-  id Int @id @default(autoincrement())
-  name String @unique
+  id       Int    @id @default(autoincrement())
+  name     String @unique
   imageUrl String @unique
-  users User[]
+  users    User[]
 }
 
 // model Collection {
@@ -34,5 +34,3 @@ model Card {
 //   card Card @relation(fields: [cardId], references:[id])
 //   cardId Int
 // }
-
-
