@@ -23,23 +23,21 @@ app.get('/api/cards', (req, res) => {
 app.post('/api/cards', async (req, res) => {
   console.log(req.body)
   const { name, imageUrl } = req.body;
-  const newCard = await prisma.card.create({
-    data: {
-      name,
-      imageUrl,
-    }
-  })
-  try {
-    const newUser = await prisma.user.create({
-      data: {
-        username: 'test',
-        password: 'test',
-      }
-    })
-  } catch (e) {
-    console.log(e)
-  }
-  res.status(201).json(newCard);
+
+
+
+  // const newCard = await prisma.card.create({
+  //   data: {
+  //     name,
+  //     imageUrl,
+  //   }
+  // })
+  // try {
+  //   const newUserCard = await prisma.
+  // } catch (e) {
+  //   console.log(e)
+  // }
+  // res.status(201).json(newCard);
 })
 app.listen(port, () => {
   console.log(`Example app listening at PORT ${port}`)
