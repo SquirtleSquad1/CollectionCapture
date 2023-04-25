@@ -14,24 +14,29 @@ datasource db {
 // }
 
 model User {
-  id       String @id @default(uuid())
-  username String @unique
+  id       String       @id @default(uuid())
+  username String       @unique
   password String
   cards    Collection[]
 }
 
 model Card {
-  id       Int    @id @default(autoincrement())
-  name     String @unique
-  imageUrl String @unique
+  id       Int          @id
+  imageUrl String       @unique
   users    Collection[]
 }
 
+model Test {
+  id   String @id @default(uuid())
+  user String
+}
+
 model Collection {
-  user User @relation(fields: [userId], references:[id])
-  userId String
-  card Card @relation(fields: [cardId], references:[id])
-  cardId Int
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+  card     Card   @relation(fields: [cardId], references: [id])
+  cardId   Int
+  quantity Int
 
   @@id([userId, cardId])
 }

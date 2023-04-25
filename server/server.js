@@ -1,11 +1,10 @@
 import express from "express";
 import mtg from 'mtgsdk';
+import middleware from "./controller/controller.js"
 
 const app = express();
 const port = 3000;
-const { PrismaClient } = require('@prisma/client');
 
-const prisma = new PrismaClient()
 // use `prisma` in your application to read and write data in your DB
 
 // parse json request body
@@ -25,12 +24,16 @@ app.get('/api/getCards', async (req, res) => {
   }
 });
 
+app.post('/api/getCards', middleware.postCard, (req, res) => {
+  return res.status(201).json('created');
+})
+
 app.use((err, req, res, next) => {
   const error = {
     message: 'unknown error occured',
     err: err
   };
-  res.status(500).send({error, ...err});
+  res.status(500).send({ error, ...err });
 });
 
 // listen
