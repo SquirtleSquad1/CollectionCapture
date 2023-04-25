@@ -13,6 +13,8 @@ function validateUsername(username) {
     return `Usernames must be at least 3 characters long`;
   }
 }
+
+// validates the password
 function validatePassword(password) {
   if (typeof password !== "string" || password.length < 6) {
     return `Passwords must be at least 6 characters long`;
@@ -26,6 +28,8 @@ export function routeData() {
     return {};
   });
 }
+
+// create a login form
 export default function Login() {
   const data = useRouteData();
   const params = useParams();
@@ -102,6 +106,7 @@ export default function Login() {
       }
     }
   });
+  
   return (
     <main>
       <h1>Login</h1>
