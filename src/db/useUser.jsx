@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import { createServerData$, redirect } from "solid-start/server";
 import { getUser } from "./session";
 
-
 /**
  * Uses createServerData to connect to Prisma then uses getUser to get the user
  * @returns {*}

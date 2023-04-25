@@ -11,5 +11,5 @@ app.use(express.urlencoded({ extended: true }));
 
 // app.get('/cards', )
 app.listen(port, () => {
-    console.log(`Example app listening at PORT ${port}`)
+    console.log(`Express backend listening at PORT:${port}`)
 })

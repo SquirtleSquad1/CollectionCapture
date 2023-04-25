@@ -8,18 +8,33 @@ import {
 } from "solid-start/server";
 import { db } from "~/db";
 import { createUserSession, getUser, login, register } from "~/db/session";
+
+/**
+ * Username validation
+ * @param {*} username
+ * @returns {string}
+ */
 function validateUsername(username) {
   if (typeof username !== "string" || username.length < 3) {
     return `Usernames must be at least 3 characters long`;
   }
 }
 
-// validates the password
+/**
+ * Password validation
+ * @param {*} password
+ * @returns {string}
+ */
 function validatePassword(password) {
   if (typeof password !== "string" || password.length < 6) {
     return `Passwords must be at least 6 characters long`;
   }
 }
+
+/**
+ * No idea what is happening
+ * @returns {*}
+ */
 export function routeData() {
   return createServerData$(async (_, { request }) => {
     if (await getUser(db, request)) {
@@ -29,7 +44,10 @@ export function routeData() {
   });
 }
 
-// create a login form
+/**
+ * Form that handles logging in and registering
+ * @returns {*}
+ */
 export default function Login() {
   const data = useRouteData();
   const params = useParams();
@@ -130,6 +148,7 @@ export default function Login() {
           <label for="username-input">Username</label>
           <input name="username" placeholder="kody" />
         </div>
+        {/* Special tag that is revealed when some conditional fits. Here, the conditional states it will show if it cannot log in. Evals the conditional if any part of the conditional is evaulated to true */}
         <Show when={loggingIn.error?.fieldErrors?.username}>
           <p role="alert">{loggingIn.error.fieldErrors.username}</p>
         </Show>

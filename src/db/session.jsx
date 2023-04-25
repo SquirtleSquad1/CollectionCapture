@@ -72,6 +72,7 @@ export async function getUserId(request) {
   if (!userId || typeof userId !== "string") return null;
   return userId;
 }
+
 /**
  * Upon visiting a page, check if the user is logged in. If not, redirect to login page.
  * @param {*} request
