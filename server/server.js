@@ -22,6 +22,11 @@ app.get('/api/getCards', async (req, res, next) => {
   }
 });
 
+app.post('/api/card', async (req, res, next) => {
+  console.log('hit')
+  console.log(req.body)
+})
+
 app.use((err, req, res, next) => {
   const error = {
     message: 'unknown error occured',

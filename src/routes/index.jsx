@@ -2,6 +2,7 @@ import { refetchRouteData, useRouteData } from "solid-start";
 import { createServerAction$ } from "solid-start/server";
 import { logout } from "~/db/session";
 import { useUser } from "../db/useUser";
+import Card from "~/components/Card";
 export function routeData() {
   return useUser();
 }
@@ -11,6 +12,7 @@ export default function Home() {
   
   return (
     <main class="full-width">
+      <Card imageUrl={'http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=409741&type=card'}/>
       <h1>Hello {user()?.username}</h1>
       <h3>This sucks</h3>
       <button onClick={() => refetchRouteData()}>Refresh</button>
