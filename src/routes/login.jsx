@@ -92,12 +92,14 @@ export default function Login() {
         }
         return createUserSession(`${user.id}`, redirectTo);
       }
+      // error handling for user creation
       case "register": {
         const userExists = await db.user.findUnique({
           where: {
             username,
           },
         });
+        // error if user exists
         if (userExists) {
           throw new FormError(`User with username ${username} already exists`, {
             fields,
@@ -107,6 +109,7 @@ export default function Login() {
           username,
           password,
         });
+        // error handling for user creation
         if (!user) {
           throw new FormError(
             `Something went wrong trying to create a new user.`,
