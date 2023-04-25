@@ -8,6 +8,7 @@ export function routeData() {
 export default function Home() {
   const user = useRouteData();
   const [, { Form }] = createServerAction$((f, { request }) => logout(request));
+  
   return (
     <main class="full-width">
       <h1>Hello {user()?.username}</h1>
