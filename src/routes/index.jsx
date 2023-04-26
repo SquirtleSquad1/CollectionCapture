@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { For, createSignal } from "solid-js";
 import loading from '../assets/loading.gif';
+import Card from '~/components/Card';
 
 const Index = () => {
   const [search, setSearch] = createSignal('');
@@ -21,6 +22,7 @@ const Index = () => {
     });
     
     setData(response.data.filter(card => card.imageUrl));
+    console.log(data())
     setIsLoading(false);
   }
   
@@ -37,7 +39,7 @@ const Index = () => {
         </form>
       <div class="flex mt-8">
         <div class="flex-2 flex-col justify-center self-center w-1/3 h-screen bg-slate-400 rounded-lg mr-4 p-4 overflow-y-auto">
-          {
+          {/* {
             data() && Array.isArray(data()) ? (
               <For each={data()}>{
                 (card) => (
@@ -45,7 +47,7 @@ const Index = () => {
                 )
               } </For>
             ) : <p>No card data</p>
-          }
+          } */}
         </div>
         <div class="flex-2 w-2/3 h-screen p-4 bg-slate-500 rounded-lg flex-wrap overflow-y-auto">
           {
@@ -54,9 +56,7 @@ const Index = () => {
                 <For each={data()}>{
                   (card) => {
                       return (
-                      <div class="m-2 w-1/6">
-                        <img src={card.imageUrl} />
-                      </div>
+                      <Card imageUrl={card.imageUrl} type={'search'}/>
                       )
                     }
                   }

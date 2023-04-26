@@ -38,10 +38,12 @@ app.get('/api/getCards', async (req, res) => {
   console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.params)}`);
   const { name } = req.query;
   try {
-    const cards = await mtg.card.where({name});
-    return res.json(cards);
+    // const { name } = req.body;
+    const cardNames = await mtg.card.where({ name });
+    return res.json(cardNames);
   } catch (error) {
     console.error(error);
+    return res.status(500).send('Server error');
   }
 });
 
