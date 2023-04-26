@@ -4,13 +4,12 @@ import { For, createSignal } from "solid-js";
 import loading from '../assets/loading.gif';
 
 import { useCollectionContext } from '../context/CollectionContext';
+import Card from '~/components/Card';
 
 const cache = new LRUCache({
   max: 100,
   maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
 })
-import Card from '~/components/Card';
-
 
 const Index = () => {
   const { cards, setCards } = useCollectionContext();
@@ -39,16 +38,6 @@ const Index = () => {
     }
     setData(cache.get(queryKey));
 
-    const response = await axios.get('/api/getCards', {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        params: {
-          name: search().trim()
-        }
-    });
-    
-    setData(response.data.filter(card => card.imageUrl));
     console.log(data())
 
     setIsLoading(false);
