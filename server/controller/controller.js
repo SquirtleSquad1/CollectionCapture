@@ -3,6 +3,19 @@ const prisma = new PrismaClient()
 
 export default {
 
+
+  // getDeck: async (req, res, next) => {
+  //   const { userId } = req.query; 
+  //
+  //   try {
+  //     console.log('test')
+  //     // const cardsInDeck = await prisma.d
+  //   } catch(e){
+  //     return next(e)
+  //   }
+  //
+  // },
+
   getUser: async (req, res, next) => {
     const { username, password } = req.query;
 
