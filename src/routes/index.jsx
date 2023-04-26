@@ -1,69 +1,72 @@
-import { refetchRouteData, useRouteData } from "solid-start";
-import { createServerAction$ } from "solid-start/server";
-import { logout } from "~/db/session";
-import { useUser } from "../db/useUser";
-export function routeData() {
-  return useUser();
-}
-export default function Home() {
-  const user = useRouteData();
-  const [, { Form }] = createServerAction$((f, { request }) => logout(request));
+import axios from 'axios';
+import { For, createSignal } from "solid-js";
+import loading from '../assets/loading.gif';
+
+const Index = () => {
+  const [search, setSearch] = createSignal('');
+  const [data, setData] = createSignal(null);
+  const [isLoading, setIsLoading] = createSignal(false);
+
+  // submit search query to server
+  const handleSearch = async(event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    const response = await axios.get('/api/getCards', {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        params: {
+          name: search().trim()
+        }
+    });
+    
+    setData(response.data.filter(card => card.imageUrl));
+    setIsLoading(false);
+  }
   
+  const handleInput = (e) => {
+    setSearch(e.target.value)
+  }
+
   return (
-    <main class="full-width">
-      <h1>Hello {user()?.username}</h1>
-      <h3>This sucks</h3>
-      <button onClick={() => refetchRouteData()}>Refresh</button>
-      <Form>
-        <button name="logout" type="submit">
-          Logout
-        </button>
-      </Form>
+    <main class="p-4">
+      <h1 class="flex justify-center mb-8">Decks</h1>
+        <form onSubmit={handleSearch} class='flex-row items-baseline'>
+          <input type="text" placeholder="Search for a card" onInput={handleInput}/>
+          <button type="submit" class="ml-6 w-20 border-2">Search</button>
+        </form>
+      <div class="flex mt-8">
+        <div class="flex-2 flex-col justify-center self-center w-1/3 h-screen bg-slate-400 rounded-lg mr-4 p-4 overflow-y-auto">
+          {
+            data() && Array.isArray(data()) ? (
+              <For each={data()}>{
+                (card) => (
+                  <div class='border-b-2 border-black w-full pb-2'>{card.name}</div>
+                )
+              } </For>
+            ) : <p>No card data</p>
+          }
+        </div>
+        <div class="flex-2 w-2/3 h-screen p-4 bg-slate-500 rounded-lg flex-wrap overflow-y-auto">
+          {
+            isLoading() ? <div class='w-full flex justify-center'><img src={loading} class='w-16 h-16' /></div> : (
+              Array.isArray(data()) ? (
+                <For each={data()}>{
+                  (card) => {
+                      return (
+                      <div class="m-2 w-1/6">
+                        <img src={card.imageUrl} />
+                      </div>
+                      )
+                    }
+                  }
+              </For>) : <p>No card data</p>
+            )
+          }
+        </div>
+      </div>
     </main>
-  );
+  )
 }
 
-// import { createSignal, For } from "solid-js";
-// export default function Home() {
-//   const [cardName, setCardName] = createSignal("");
-//   const [cardData, setCardData] = createSignal(null);
-
-//   const handleSubmit = async (event) => {
-//     event.preventDefault();
-//     // handle form submission here, e.g. by pinging the express endpoint
-//     await fetch(`/api/getCards?name=${cardName()}`)
-//       .then((response) => response.json())
-//       .then((data) => setCardData(data));
-//   };
-
-//   const handleInputChange = (event) => {
-//     setCardName(event.target.value);
-//   };
-
-//   return (
-//     <main class="full-width">
-//       <h1 class="text-3xl font-bold underline">{cardName()}</h1>
-//       <form onSubmit={handleSubmit} id="card-search">
-//         <input
-//           type="text"
-//           placeholder="Name of card"
-//           value={cardName()}
-//           onInput={handleInputChange}
-//         />
-//         <button type="submit">Search</button>
-//       </form>
-
-//       <div class="border-2 border-black" id="card-display">
-//         {cardData() ? (
-//           <ul>
-//             <For each={cardData()}>{(card) => (
-//               <li >{card.name}</li>
-//             )}</For>
-//           </ul>
-//         ) : (
-//           <h3>No cards found</h3>
-//         )}
-//       </div>
-//     </main>
-//   );
-// }
+export default Index;
