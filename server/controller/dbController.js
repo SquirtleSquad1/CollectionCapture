@@ -3,9 +3,8 @@ const prisma = new PrismaClient()
 
 export default {
 
-  getUser: async (req, res, next) => {
+  loginUser: async (req, res, next) => {
     const { username, password } = req.body;
-
     try {
       const user = await prisma.user.findUnique({
         where: {
@@ -15,18 +14,19 @@ export default {
 
       if (user.password === password) {
         res.locals.userId = user.id;
+        res.locals.status = 200;
       } else {
-        res.locals.userId = 'bad username/password'
+        res.locals.userId = ''
+        res.locals.status = 401;
       }
       return next()
     }
     catch (err){
-      console.log(err)
-      return next("error in getUser middleware")
+      return next({message: 'error in getUser middleware'})
     }
   },
 
-  postUser: async (req, res, next) => {
+  signupUser: async (req, res, next) => {
     const {username, password} = req.body;
     try {
       const user = await prisma.user.findUnique({
@@ -80,6 +80,7 @@ export default {
             }
           }
         })
+        return next({message: newCard});
       } else {
         const userAndCard = await prisma.collection.upsert({
           create: {
@@ -100,7 +101,6 @@ export default {
           }
         })
 
-        console.log(userAndCard)
         // await prisma.collection.update({
         //   where: {
         //     userId_cardId: 

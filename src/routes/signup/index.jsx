@@ -2,23 +2,21 @@ import axios from 'axios';
 import { createRouteAction, redirect } from 'solid-start';
 
 const Signup = () => {
-  const [, { Form }] = createRouteAction(async (formData) => {
-    const username = formData.get("username");
-    const password = formData.get("password");
-    const login = await axios.post('/user/login', {
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        data: {
-          username,
-          password
+    const [, { Form }] = createRouteAction(async (formData) => {
+        const username = formData.get("username");
+        const password = formData.get("password");
+        try {
+          const response = await axios.post('/api/signupUser', {
+            username,
+            password
+          });
+          if (response.status === 200) {
+            return redirect('/login');
+          }
+        } catch (error) {
+          console.error(error);
         }
-    })
-    if(login) {
-        console.log(login)
-      return redirect('/')
-    }
-  });
+      });
   
   return (
     <div class="flex flex-col">

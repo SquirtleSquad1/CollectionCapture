@@ -1,8 +1,8 @@
 import express from "express";
 import session from 'express-session';
 import mtg from 'mtgsdk';
-import middleware from "./controller/controller.js"
-
+import middleware from "./controller/dbController.js";
+import sessionController from './controller/sessionController.js';
 const app = express();
 const port = 3000;
 
@@ -25,8 +25,9 @@ app.use(session({
 
 // parse urlencoded request body
 app.use(express.urlencoded({ extended: true }));
-
+app.use(sessionController.verifySession)
 app.get('/api/getSession', (req, res) => {
+  // console.log('Session', req.session)
   return res.json(req.session);  
 })
 
@@ -40,21 +41,32 @@ app.get('/api/getCards', async (req, res) => {
     return res.status(500).send('Server error');
   }
 });
-
-app.get('/api/users', middleware.getUser, (req, res) => {
+app.post('/api/signupUser', middleware.signupUser, (req, res) => {
+  return res.status(200).json(res.locals.userId)
+})
+app.post('/api/loginUser', middleware.loginUser, sessionController.createSession, (req, res) => {
+  if(res.locals.status === 200) {
+    // save to session
+    req.session.userId = res.locals.userId;
+  }
   return res.status(200).json(res.locals.userId)
 })
 
 app.post('/api/getCards', middleware.postCard, (req, res) => {
-  return res.status(201).json('card created/updated');
+
+  return res.status(200).json('card created/updated');
 })
 
-app.use((err, req, res, next) => {
+app.use((req, res) => {
+  return res.status(404).json({message: 'page not found'})
+});
+
+app.use((err, req, res) => {
   const error = {
     message: 'unknown error occured',
     err: err
   };
-  res.status(500).send({ error, ...err });
+  res.status(500).json({ error, ...err });
 });
 
 // listen

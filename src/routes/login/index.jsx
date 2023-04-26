@@ -1,22 +1,22 @@
 import axios from 'axios';
 import { createRouteAction, redirect } from 'solid-start';
 const Login = () => {
-  const [, { Form }] = createRouteAction(async (formData) => {
+  const [_, { Form }] = createRouteAction(async (formData) => {
     const username = formData.get("username");
     const password = formData.get("password");
-    const login = await axios.post('/user/login', {
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        data: {
-          username,
-          password
-        }
-    })
-    if(login) {
-      return redirect('/')
+    try {
+      const response = await axios.post('/api/loginUser', {
+        username,
+        password
+      });
+      if (response.status === 200) {
+        return redirect('/');
+      }
+    } catch (error) {
+      console.error(error);
     }
   });
+
 
   return (
   <div class="flex flex-col">
@@ -26,6 +26,7 @@ const Login = () => {
       <input type="text" name="username" id="username" />
       <label for="password">Password</label>
       <input type="password" name="password" id="password" />
+      <button type='submit'>Login</button>
     </Form>
   </div>
   )
