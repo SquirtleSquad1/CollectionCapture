@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createSignal, Switch, Match } from "solid-js";
+import { Match, Switch, createSignal } from "solid-js";
 
 export default function Card(props) {
   const [success, setSuccess] = createSignal(false)
@@ -14,7 +14,7 @@ export default function Card(props) {
       })
       setSuccess(true)
       setTimeout(() => {
-        setSuccess(false)
+      setSuccess(false)
       }, 2000)
     }
    catch(error) {

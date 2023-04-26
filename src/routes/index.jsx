@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { LRUCache } from 'lru-cache';
 import { For, createEffect, createSignal, onCleanup } from "solid-js";
+import Card from '~/components/Card';
 import loading from '../assets/loading.gif';
-
 import { useCollectionContext } from '../context/CollectionContext';
 
 const cache = new LRUCache({
@@ -96,7 +96,7 @@ const Index = () => {
                         setCards((prevCards) => [...prevCards, card]);
                       }
                       return (
-                      <Card imageUrl={card.imageUrl} type={'search'} cardId={card.id}/>
+                       <Card imageUrl={card.imageUrl} type={'search'} cardId={card.id}/>
                       )
                     }
                   }
