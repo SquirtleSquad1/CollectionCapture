@@ -96,9 +96,7 @@ const Index = () => {
                         setCards((prevCards) => [...prevCards, card]);
                       }
                       return (
-                        <div class="m-2 w-1/6" style={{"background-image": `url(${card.imageUrl})`}} onClick={handleAddCard}>
-                          <img src={card.imageUrl} alt="card" />
-                        </div>
+                      <Card imageUrl={card.imageUrl} type={'search'} cardId={card.id}/>
                       )
                     }
                   }
