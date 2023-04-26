@@ -3,11 +3,23 @@ import { LRUCache } from 'lru-cache';
 import { For, createSignal } from "solid-js";
 import loading from '../assets/loading.gif';
 import { useCollectionContext } from '../context/CollectionContext';
+import { LocalStorage } from 'node-localstorage';
 
 const cache = new LRUCache({
   max: 100,
-  maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
-})
+  maxAge: 1000 * 60 * 60 // Cache results for 1 hour
+});
+
+(function() {
+  const serializedCache = localStorage.getItem('myCache');
+  if (serializedCache) {
+    const json = JSON.parse(serializedCache);
+    cache.load(json);
+    console.log(`Loaded cache from local storage (${cache.itemCount()} items)`);
+  } else {
+    console.log('No cache found in local storage');
+  }
+})();
 
 const Index = () => {
   const { cards, setCards } = useCollectionContext();
