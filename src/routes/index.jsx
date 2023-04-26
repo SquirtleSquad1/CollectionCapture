@@ -2,12 +2,15 @@ import axios from 'axios';
 import { LRUCache } from 'lru-cache';
 import { For, createSignal } from "solid-js";
 import loading from '../assets/loading.gif';
+
 import { useCollectionContext } from '../context/CollectionContext';
 
 const cache = new LRUCache({
   max: 100,
   maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
 })
+import Card from '~/components/Card';
+
 
 const Index = () => {
   const { cards, setCards } = useCollectionContext();
@@ -19,6 +22,7 @@ const Index = () => {
   const handleSearch = async(event) => {
     event.preventDefault();
     setIsLoading(true);
+
     // hash queryname
     const queryKey = search().trim().toLowerCase().replace(/\s/g, '');
     // check if query is in cache
@@ -34,6 +38,19 @@ const Index = () => {
       cache.set(queryKey, response.data.filter(card => card.imageUrl))
     }
     setData(cache.get(queryKey));
+
+    const response = await axios.get('/api/getCards', {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        params: {
+          name: search().trim()
+        }
+    });
+    
+    setData(response.data.filter(card => card.imageUrl));
+    console.log(data())
+
     setIsLoading(false);
   }
   
@@ -51,9 +68,21 @@ const Index = () => {
         </form>
       <div class="flex mt-8">
         <div class="flex-2 flex-col justify-center self-center w-1/3 h-screen bg-slate-400 rounded-lg mr-4 p-4 overflow-y-auto">
+
           {
             cards().length > 0 ? <p>{JSON.stringify(cards())}</p> : <p>No cards</p>
           }
+
+          {/* {
+            data() && Array.isArray(data()) ? (
+              <For each={data()}>{
+                (card) => (
+                  <div class='border-b-2 border-black w-full pb-2'>{card.name}</div>
+                )
+              } </For>
+            ) : <p>No card data</p>
+          } */}
+
         </div>
         <div class="flex-2 w-2/3 h-screen p-4 bg-slate-500 rounded-lg flex-wrap overflow-y-auto">
           {
