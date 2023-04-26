@@ -26,7 +26,7 @@ app.use(session({
 }));
 
 // verify sessions
-app.use(sessionController.verifySession)
+app.use(sessionController.createSession)
 
 app.get('/api/getSession', (req, res) => {
   // console.log('Session', req.session)
@@ -36,6 +36,7 @@ app.get('/api/getCards', async (req, res) => {
   console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.query)}`);
   console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.body)}`);
   console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.params)}`);
+  // console.log('here', req.session.userId)
   const { name } = req.query;
   try {
     // const { name } = req.body;
