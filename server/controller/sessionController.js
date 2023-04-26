@@ -4,12 +4,12 @@ const sessionController = {
   createSession: (req, res, next) => {
     //if there is no session, create one
     if (!req.session.userId) {
-      req.session.userId = res.locals.userId;
+      req.session.userId = '05a11cd8-7713-4f59-8628-5f9087f5d575'
     }
     else {
       //if there is a session, destroy it and create a new one
       req.session.destroy();
-      req.session.userId = res.locals.userId;
+      req.session.userId = '05a11cd8-7713-4f59-8628-5f9087f5d575'
     }
     return next();
   },

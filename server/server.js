@@ -26,7 +26,7 @@ app.use(session({
 }));
 
 // verify sessions
-app.use(sessionController.verifySession)
+app.use(sessionController.createSession)
 
 app.get('/api/getSession', (req, res) => {
   // console.log('Session', req.session)
@@ -36,12 +36,15 @@ app.get('/api/getCards', async (req, res) => {
   console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.query)}`);
   console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.body)}`);
   console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.params)}`);
+  // console.log('here', req.session.userId)
   const { name } = req.query;
   try {
-    const cards = await mtg.card.where({name});
-    return res.json(cards);
+    // const { name } = req.body;
+    const cardNames = await mtg.card.where({ name });
+    return res.json(cardNames);
   } catch (error) {
     console.error(error);
+    return res.status(500).send('Server error');
   }
 });
 
