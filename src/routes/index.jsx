@@ -1,29 +1,27 @@
 import axios from 'axios';
 import { LRUCache } from 'lru-cache';
-import { LocalStorage } from 'node-localstorage';
-import { For, createSignal, onCleanup, onMount } from "solid-js";
+import { For, createEffect, createSignal, onCleanup } from "solid-js";
 import loading from '../assets/loading.gif';
 import { useCollectionContext } from '../context/CollectionContext';
 
-const localStorage = new LocalStorage('./scratch');
 
-const cache = new LRUCache({
-  max: 100,
-  maxAge: 1000 * 60 * 60 // Cache results for 1 hour
-});
+  const cache = new LRUCache({
+    max: 100,
+    maxAge: 1000 * 60 * 60 // Cache results for 1 hour
+  });
+// onMount(() => {
 
-onMount(() => {
-  (function() {
-    const serializedCache = localStorage.getItem('myCache');
-    if (serializedCache) {
-      const json = JSON.parse(serializedCache);
-      cache.load(json);
-      console.log(`Loaded cache from local storage (${cache.itemCount()} items)`);
-    } else {
-      console.log('No cache found in local storage');
-    }
-  })();
-})
+//   (function() {
+//     const serializedCache = window.localStorage.getItem('myCache');
+//     if (serializedCache) {
+//       const json = JSON.parse(serializedCache);
+//       cache.load(json);
+//       console.log(`Loaded cache from local storage (${cache.itemCount()} items)`);
+//     } else {
+//       console.log('No cache found in local storage');
+//     }
+//   })();
+// })
 
 const Index = () => {
   const { cards, setCards } = useCollectionContext();
@@ -31,6 +29,20 @@ const Index = () => {
   const [data, setData] = createSignal(null);
   const [isLoading, setIsLoading] = createSignal(false);
 
+
+
+  createEffect(() => {
+    (async function() {
+      const serializedCache = window.localStorage.getItem('myCache');
+      if (serializedCache) {
+        const json = JSON.parse(serializedCache);
+        await cache.load(json);
+        console.log(`Loaded cache from local storage (${cache.itemCount()} items)`);
+      } else {
+        console.log('No cache found in local storage');
+      }
+    })();
+  })
   // submit search query to server
   const handleSearch = async(event) => {
     event.preventDefault();
@@ -99,7 +111,7 @@ const Index = () => {
 }
 
 onCleanup(() => {
-  localStorage.setItem('myCache', JSON.stringify(cache.dump()));
+  window.localStorage.setItem('myCache', JSON.stringify(cache.dump()));
 })
 
 
