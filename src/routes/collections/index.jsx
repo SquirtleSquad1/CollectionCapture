@@ -7,11 +7,10 @@ const Collections = () => {
 
   return (
     <main class="flex flex-col items-center">
-      <h1>{JSON.stringify(cards)}</h1>
-      <div class="flex-2 w-2/3 h-screen p-4 bg-slate-500 rounded-lg flex-wrap overflow-y-auto m-auto">
+      <h1 class="mb-4" >My Collection</h1>
+      <div class="flex-2 w-2/3 h-screen p-4 bg-slate-500 rounded-lg flex-wrap overflow-y-auto m-auto justify-center">
         <For each={cards()}>{
           (el) => {
-              console.log(el)
               return (
                 <Card imageUrl={el.card.imageUrl} type={'collection'} cardId={el.id}/>
               )

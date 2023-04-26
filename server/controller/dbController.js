@@ -53,9 +53,8 @@ const dbController = {
   postCard: async (req, res, next) => {
     const { userId } = req.session
     console.log('cehcking session', req.session)
-    const { cardId, imageUrl } = req.body;
-    console.log('cardId', cardId)
-    console.log('userid', userId)
+    const { cardId, imageUrl, cardName } = req.body;
+    console.log(req.body)
     try {
       const card = await prisma.card.findUnique({
         where: {
@@ -68,6 +67,7 @@ const dbController = {
           data: {
             id: cardId,
             imageUrl,
+            name: cardName,
             users: {
               create: [
                 {

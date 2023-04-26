@@ -76,18 +76,19 @@ const Index = () => {
         <div class="flex-2 flex-col justify-center self-center w-1/3 h-screen bg-slate-400 rounded-lg mr-4 p-4 overflow-y-auto">
 
           {
-            cards().length > 0 ? <p>{JSON.stringify(cards())}</p> : <p>No cards</p>
+            cards().length > 0 ? (
+              <For each={cards()}>{
+                (el) => {
+                  // return card title and number of copies
+                  console.log(el)
+                  return (
+                    <div class='flex justify-between'>
+                      <span>{`${el.card.name} : ${el.quantity}`}</span>
+                    </div>
+                  )
+                }}</For>
+              ) : <p>No cards</p>
           }
-
-          {/* {
-            data() && Array.isArray(data()) ? (
-              <For each={data()}>{
-                (card) => (
-                  <div class='border-b-2 border-black w-full pb-2'>{card.name}</div>
-                )
-              } </For>
-            ) : <p>No card data</p>
-          } */}
 
         </div>
         <div class="flex-2 w-2/3 h-screen p-4 bg-slate-500 rounded-lg flex-wrap overflow-y-auto">
@@ -100,7 +101,7 @@ const Index = () => {
                         setCards((prevCards) => [...prevCards, card]);
                       }
                       return (
-                      <Card imageUrl={card.imageUrl} type={'search'} cardId={card.id}/>
+                      <Card imageUrl={card.imageUrl} type={'search'} cardId={card.id} cardName={card.name}/>
                       )
                     }
                   }

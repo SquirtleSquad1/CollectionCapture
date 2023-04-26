@@ -11,20 +11,27 @@ export default function Card(props) {
   async function handleAddCollection() {
     try {
       const card = await axios.post("/api/getCards", {
+          cardName: props.cardName,
           cardId: props.cardId,
           imageUrl: props.imageUrl
       })
+
+      const collection = await axios.get("/api/getCollection")
+      console.log(collection)
+      setCards(collection)
       setSuccess(true)
       setTimeout(() => {
         setSuccess(false)
       }, 2000)
+
+      setCards(collection.data)
     }
    catch(error) {
     setError(true)
       setTimeout(() => {
         setError(false)
       }, 2000)
-   }
+    }
   }
 
   async function handleAddDeck() {
@@ -33,7 +40,7 @@ export default function Card(props) {
           id: props.id,
           imageUrl: props.imageUrl
       })
-      setCards((prev) => [...prev, card.data])
+
       setSuccess(true)
       setTimeout(() => {
         setSuccess(false)
@@ -74,8 +81,8 @@ export default function Card(props) {
   }
 
   return(
-  <div class="flex flex-col w-fit">
-    <img src={props.imageUrl} />
+  <div class="flex flex-col w-fit m-2">
+    <img class="w-40" src={props.imageUrl} />
     <Switch>
       <Match when={success()}>
       <button class="bg-green-500 text-white cursor-auto">{successMsg(props.type)}</button>

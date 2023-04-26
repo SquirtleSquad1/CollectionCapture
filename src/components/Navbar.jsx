@@ -12,6 +12,9 @@ const Navbar = () => {
       <ul class='flex ml-auto'>
         <li class="mr-4"><A href="/" class='text-white hover:text-gray-300'>Home</A></li>
         <li class="mr-4"><A href="/collections" class='text-white hover:text-gray-300'>Collections</A></li>
+        <li class="mr-4"><span class="'text-white hover:text-gray-300">Decks</span></li>
+        <li class="mr-4"><span class="'text-white hover:text-gray-300">Search</span></li>
+        <li class="mr-4"><span class="'text-white hover:text-gray-300">Logout</span></li>
       </ul>
     </nav>
   )
