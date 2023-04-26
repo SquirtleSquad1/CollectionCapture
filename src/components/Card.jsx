@@ -8,8 +8,8 @@ export default function Card(props) {
 
   async function handleAddCollection() {
     try {
-      const card = await axios.post("/api/card", {
-          id: props.id,
+      const card = await axios.post("/api/getCards", {
+          cardId: props.cardId,
           imageUrl: props.imageUrl
       })
       setSuccess(true)
