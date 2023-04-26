@@ -56,7 +56,7 @@ const Index = () => {
                 <For each={data()}>{
                   (card) => {
                       return (
-                      <Card imageUrl={card.imageUrl} type={'search'}/>
+                      <Card imageUrl={card.imageUrl} type={'search'} cardId={card.id}/>
                       )
                     }
                   }

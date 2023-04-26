@@ -11,7 +11,6 @@ const dbController = {
           username: username
         }
       })
-
       if (user.password === password) {
         res.locals.userId = user.id;
         res.locals.status = 200;
@@ -52,15 +51,17 @@ const dbController = {
   },
 
   postCard: async (req, res, next) => {
-    const { userId, cardId, imageUrl } = req.body;
-
+    const { userId } = req.session
+    const { cardId, imageUrl } = req.body;
+    console.log('cardId', cardId)
+    console.log('userid', userId)
     try {
       const card = await prisma.card.findUnique({
         where: {
           id: cardId
         }
       })
-
+      console.log('card', card)
       if (!card) {
         const newCard = await prisma.card.create({
           data: {
@@ -80,7 +81,7 @@ const dbController = {
             }
           }
         })
-        return next({message: newCard});
+        // return next({message: newCard});
       } else {
         const userAndCard = await prisma.collection.upsert({
           create: {
