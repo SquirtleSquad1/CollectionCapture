@@ -1,8 +1,16 @@
 import axios from 'axios';
+import { LRUCache } from 'lru-cache';
 import { For, createSignal } from "solid-js";
 import loading from '../assets/loading.gif';
+import { useCollectionContext } from '../context/CollectionContext';
+
+const cache = new LRUCache({
+  max: 100,
+  maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+})
 
 const Index = () => {
+  const { cards, setCards } = useCollectionContext();
   const [search, setSearch] = createSignal('');
   const [data, setData] = createSignal(null);
   const [isLoading, setIsLoading] = createSignal(false);
@@ -11,22 +19,28 @@ const Index = () => {
   const handleSearch = async(event) => {
     event.preventDefault();
     setIsLoading(true);
-    const response = await axios.get('/api/getCards', {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        params: {
-          name: search().trim()
-        }
-    });
-    
-    setData(response.data.filter(card => card.imageUrl));
+    // hash queryname
+    const queryKey = search().trim().toLowerCase().replace(/\s/g, '');
+    // check if query is in cache
+    if (!cache.has(queryKey)){
+      const response = await axios.get('/api/getCards', {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          params: {
+            name: search().trim()
+          }
+      });
+      cache.set(queryKey, response.data.filter(card => card.imageUrl))
+    }
+    setData(cache.get(queryKey));
     setIsLoading(false);
   }
   
   const handleInput = (e) => {
     setSearch(e.target.value)
   }
+
 
   return (
     <main class="p-4">
@@ -38,13 +52,7 @@ const Index = () => {
       <div class="flex mt-8">
         <div class="flex-2 flex-col justify-center self-center w-1/3 h-screen bg-slate-400 rounded-lg mr-4 p-4 overflow-y-auto">
           {
-            data() && Array.isArray(data()) ? (
-              <For each={data()}>{
-                (card) => (
-                  <div class='border-b-2 border-black w-full pb-2'>{card.name}</div>
-                )
-              } </For>
-            ) : <p>No card data</p>
+            cards().length > 0 ? <p>{JSON.stringify(cards())}</p> : <p>No cards</p>
           }
         </div>
         <div class="flex-2 w-2/3 h-screen p-4 bg-slate-500 rounded-lg flex-wrap overflow-y-auto">
@@ -53,10 +61,13 @@ const Index = () => {
               Array.isArray(data()) ? (
                 <For each={data()}>{
                   (card) => {
+                      const handleAddCard = () => {
+                        setCards((prevCards) => [...prevCards, card]);
+                      }
                       return (
-                      <div class="m-2 w-1/6">
-                        <img src={card.imageUrl} />
-                      </div>
+                        <div class="m-2 w-1/6" style={{"background-image": `url(${card.imageUrl})`}} onClick={handleAddCard}>
+                          <img src={card.imageUrl} alt="card" />
+                        </div>
                       )
                     }
                   }
