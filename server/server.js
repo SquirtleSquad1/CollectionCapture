@@ -1,9 +1,12 @@
 import express from "express";
 import session from 'express-session';
 import mtg from 'mtgsdk';
+import middleware from "./controller/controller.js"
 
 const app = express();
 const port = 3000;
+
+// use `prisma` in your application to read and write data in your DB
 
 // parse json request body
 app.use(express.json());
@@ -38,12 +41,24 @@ app.get('/api/getCards', async (req, res) => {
   }
 });
 
+app.get('/api/users', middleware.getUser, (req, res) => {
+  return res.status(200).json(res.locals.userId)
+})
+
+app.post('/api/users', middleware.postUser, (req, res) => {
+  return res.status(200).json('got user')
+})
+
+app.post('/api/getCards', middleware.postCard, (req, res) => {
+  return res.status(201).json('card created/updated');
+})
+
 app.use((err, req, res, next) => {
   const error = {
     message: 'unknown error occured',
     err: err
   };
-  res.status(500).send({error, ...err});
+  res.status(500).send({ error, ...err });
 });
 
 // listen
