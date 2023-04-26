@@ -52,6 +52,7 @@ const dbController = {
 
   postCard: async (req, res, next) => {
     const { userId } = req.session
+    console.log('cehcking session', req.session)
     const { cardId, imageUrl } = req.body;
     console.log('cardId', cardId)
     console.log('userid', userId)
@@ -81,6 +82,7 @@ const dbController = {
             }
           }
         })
+        console.log('Made new card', newCard)
         // return next({message: newCard});
       } else {
         const userAndCard = await prisma.collection.upsert({
@@ -112,30 +114,31 @@ const dbController = {
       return next();
     } catch (e) {
       console.log(e)
-      return next("error in postCard middleware")
+      return next({message: 'error in postCard middleware'})
     }
 
   },
 
   getCollection: async (req, res, next) => {
     //get user_id from req.cookie
-    const user_id = req.body.userId
+    const user_id = req.session.userId
+    console.log(user_id)
     //search database for dekcs that belong to user w/ prisma
     try {
-      const decks = await prisma.user_cards.findMany({
-        where: {
-          user_id: {
-            equals: user_id
-          },
+      const decks = await prisma.collection.findMany({
+        include: {
+          card: true,
         },
-      })
+      });
+
       //save cards to res.locals
       res.locals.decks = decks
       return next()
     }
 
     catch (error) {
-      return next(error)
+      console.log('getCollection', error)
+      return next(error) // corrected
     }
   },
 

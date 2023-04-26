@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { LRUCache } from 'lru-cache';
-import { For, createSignal } from "solid-js";
+import { For, createEffect, createSignal, onCleanup } from "solid-js";
 import loading from '../assets/loading.gif';
 
-import { useCollectionContext } from '../context/CollectionContext';
 import Card from '~/components/Card';
+import { useCollectionContext } from '../context/CollectionContext';
 
 const cache = new LRUCache({
   max: 100,
@@ -17,13 +17,30 @@ const Index = () => {
   const [data, setData] = createSignal(null);
   const [isLoading, setIsLoading] = createSignal(false);
 
+  // createeffect on lad will get collctions from server
+  createEffect(() => {
+    // grab cards from local storage if it exists and load it in cache
+    function setCacheOnLoad(){
+      const cards = JSON.parse(localStorage.getItem('cache'));
+      if (cards) cache.set(cache)
+    }
+    setCacheOnLoad()
+    async function onRenderGetCollection(){
+      const response = await axios.get('/api/getCollection');
+      console.log(response.data)
+      setCards(response.data);
+      return cards
+    }
+    onRenderGetCollection()
+  })
+
   // submit search query to server
   const handleSearch = async(event) => {
     event.preventDefault();
     setIsLoading(true);
 
     // hash queryname
-    const queryKey = search().trim().toLowerCase().replace(/\s/g, '');
+    const queryKey = search().trim().replace(/\s/g, '');
     // check if query is in cache
     if (!cache.has(queryKey)){
       const response = await axios.get('/api/getCards', {
@@ -50,7 +67,7 @@ const Index = () => {
 
   return (
     <main class="p-4">
-      <h1 class="flex justify-center mb-8">Decks</h1>
+      <h1 class="flex justify-center mb-8">Search Cards</h1>
         <form onSubmit={handleSearch} class='flex-row items-baseline'>
           <input type="text" placeholder="Search for a card" onInput={handleInput}/>
           <button type="submit" class="ml-6 w-20 border-2">Search</button>
@@ -95,5 +112,10 @@ const Index = () => {
     </main>
   )
 }
+
+onCleanup(() => {
+  // save cache to localstorage
+  localStorage.setItem('cache', JSON.stringify(cache.dump()))
+})
 
 export default Index;

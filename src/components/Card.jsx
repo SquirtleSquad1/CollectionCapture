@@ -1,10 +1,12 @@
 import axios from "axios";
-import { createSignal, Switch, Match } from "solid-js";
+import { Match, Switch, createSignal } from "solid-js";
+import { useCollectionContext } from "~/context/CollectionContext";
 
 export default function Card(props) {
   const [success, setSuccess] = createSignal(false)
   const [error, setError] = createSignal(false)
   const [deckView, setDeckView] = createSignal(false)
+  const { cards, setCards } = useCollectionContext();
 
   async function handleAddCollection() {
     try {
@@ -31,6 +33,7 @@ export default function Card(props) {
           id: props.id,
           imageUrl: props.imageUrl
       })
+      setCards((prev) => [...prev, card.data])
       setSuccess(true)
       setTimeout(() => {
         setSuccess(false)

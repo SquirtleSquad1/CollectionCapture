@@ -34,8 +34,6 @@ app.get('/api/getSession', (req, res) => {
 })
 app.get('/api/getCards', async (req, res) => {
   console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.query)}`);
-  console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.body)}`);
-  console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.params)}`);
   // console.log('here', req.session.userId)
   const { name } = req.query;
   try {
@@ -58,7 +56,9 @@ app.post('/api/loginUser', dbController.loginUser, sessionController.createSessi
   }
   return res.status(200).json(res.locals.userId)
 })
-
+app.get('/api/getCollection', dbController.getCollection, (req, res) => {
+  return res.status(200).json(res.locals.decks)
+})
 app.post('/api/getCards', dbController.postCard, (req, res) => {
 
   return res.status(200).json('card created/updated');
