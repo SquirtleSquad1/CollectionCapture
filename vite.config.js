@@ -38,7 +38,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ["solidjs", "@prisma/client"],
+    include: ["@prisma/client"],
   },
   memfs: true
 });
