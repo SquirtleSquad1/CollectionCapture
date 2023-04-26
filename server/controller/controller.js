@@ -4,7 +4,7 @@ const prisma = new PrismaClient()
 export default {
 
   getUser: async (req, res, next) => {
-    const { username, password } = req.query;
+    const { username, password } = req.body;
 
     try {
       const user = await prisma.user.findUnique({
