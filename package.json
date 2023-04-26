@@ -29,6 +29,7 @@
     "express-session": "^1.17.3",
     "lru-cache": "^9.1.1",
     "mtgsdk": "^1.0.0",
+    "node-localstorage": "^2.2.1",
     "prisma": "^4.9.0",
     "rollup-plugin-postcss": "^4.0.2",
     "solid-app-router": "^0.4.2",

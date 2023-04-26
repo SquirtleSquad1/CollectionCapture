@@ -1,14 +1,28 @@
 import axios from 'axios';
 import { LRUCache } from 'lru-cache';
-import { For, createSignal } from "solid-js";
+import { LocalStorage } from 'node-localstorage';
+import { For, createSignal, onCleanup, onMount } from "solid-js";
 import loading from '../assets/loading.gif';
-
 import { useCollectionContext } from '../context/CollectionContext';
-import Card from '~/components/Card';
+
+const localStorage = new LocalStorage('./scratch');
 
 const cache = new LRUCache({
   max: 100,
-  maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+  maxAge: 1000 * 60 * 60 // Cache results for 1 hour
+});
+
+onMount(() => {
+  (function() {
+    const serializedCache = localStorage.getItem('myCache');
+    if (serializedCache) {
+      const json = JSON.parse(serializedCache);
+      cache.load(json);
+      console.log(`Loaded cache from local storage (${cache.itemCount()} items)`);
+    } else {
+      console.log('No cache found in local storage');
+    }
+  })();
 })
 
 const Index = () => {
@@ -37,16 +51,12 @@ const Index = () => {
       cache.set(queryKey, response.data.filter(card => card.imageUrl))
     }
     setData(cache.get(queryKey));
-
-    console.log(data())
-
     setIsLoading(false);
   }
   
   const handleInput = (e) => {
     setSearch(e.target.value)
   }
-
 
   return (
     <main class="p-4">
@@ -61,16 +71,6 @@ const Index = () => {
           {
             cards().length > 0 ? <p>{JSON.stringify(cards())}</p> : <p>No cards</p>
           }
-
-          {/* {
-            data() && Array.isArray(data()) ? (
-              <For each={data()}>{
-                (card) => (
-                  <div class='border-b-2 border-black w-full pb-2'>{card.name}</div>
-                )
-              } </For>
-            ) : <p>No card data</p>
-          } */}
 
         </div>
         <div class="flex-2 w-2/3 h-screen p-4 bg-slate-500 rounded-lg flex-wrap overflow-y-auto">
@@ -97,5 +97,10 @@ const Index = () => {
     </main>
   )
 }
+
+onCleanup(() => {
+  localStorage.setItem('myCache', JSON.stringify(cache.dump()));
+})
+
 
 export default Index;
