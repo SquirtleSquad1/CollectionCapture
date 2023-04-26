@@ -1,7 +1,7 @@
 import express from "express";
 import session from 'express-session';
 import mtg from 'mtgsdk';
-import middleware from "./controller/dbController.js";
+import dbController from "./controller/dbController.js";
 import sessionController from './controller/sessionController.js';
 const app = express();
 const port = 3000;
@@ -10,9 +10,11 @@ const port = 3000;
 
 // parse json request body
 app.use(express.json());
+// parse urlencoded request body
+app.use(express.urlencoded({ extended: true }));
 // trust first proxy
 app.set('trust proxy', 1) 
-//express sesssion middleware
+// express sesssion dbController
 app.use(session({
   // todo move secret to env when working
   secret: 'secret',
@@ -23,28 +25,30 @@ app.use(session({
   saveUninitialized: true
 }));
 
-// parse urlencoded request body
-app.use(express.urlencoded({ extended: true }));
+// verify sessions
 app.use(sessionController.verifySession)
+
 app.get('/api/getSession', (req, res) => {
   // console.log('Session', req.session)
   return res.json(req.session);  
 })
-
 app.get('/api/getCards', async (req, res) => {
+  console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.query)}`);
+  console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.body)}`);
+  console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.params)}`);
+  const { name } = req.query;
   try {
-    const { name } = req.body;
-    const cardNames = await mtg.card.where({ name });
-    return res.json(cardNames);
+    const cards = await mtg.card.where({name});
+    return res.json(cards);
   } catch (error) {
     console.error(error);
-    return res.status(500).send('Server error');
   }
 });
-app.post('/api/signupUser', middleware.signupUser, (req, res) => {
+
+app.post('/api/signupUser', dbController.signupUser, (req, res) => {
   return res.status(200).json(res.locals.userId)
 })
-app.post('/api/loginUser', middleware.loginUser, sessionController.createSession, (req, res) => {
+app.post('/api/loginUser', dbController.loginUser, sessionController.createSession, (req, res) => {
   if(res.locals.status === 200) {
     // save to session
     req.session.userId = res.locals.userId;
@@ -52,21 +56,28 @@ app.post('/api/loginUser', middleware.loginUser, sessionController.createSession
   return res.status(200).json(res.locals.userId)
 })
 
-app.post('/api/getCards', middleware.postCard, (req, res) => {
+app.post('/api/getCards', dbController.postCard, (req, res) => {
 
   return res.status(200).json('card created/updated');
+})
+
+app.get('/api/test', (req, res) => {
+  return res.json({
+    message: 'test working'
+  })
 })
 
 app.use((req, res) => {
   return res.status(404).json({message: 'page not found'})
 });
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   const error = {
     message: 'unknown error occured',
     err: err
   };
-  res.status(500).json({ error, ...err });
+  const errObj = Object.assign(error, err);
+  res.status(500).json(errObj);
 });
 
 // listen

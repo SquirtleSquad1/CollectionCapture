@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient()
 
-export default {
+const dbController = {
 
   loginUser: async (req, res, next) => {
     const { username, password } = req.body;
@@ -188,3 +188,5 @@ export default {
   },
 
 }
+
+export default dbController;

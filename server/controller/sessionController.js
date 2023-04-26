@@ -18,7 +18,7 @@ const sessionController = {
   verifySession: (req, res, next) => {
     //if there is no session, redirect to login
     if (!req.session.userId) {
-      return res.redirect('/login');
+      return next()
     }
     else {
       return next();
