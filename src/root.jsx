@@ -12,6 +12,7 @@ import {
   Title,
 } from "solid-start";
 import Navbar from "./components/Navbar";
+import { CollectionProvider } from "./context/CollectionContext";
 import "./root.css";
 export default function Root() {
   return (
@@ -23,12 +24,14 @@ export default function Root() {
       </Head>
       <Body>
         <ErrorBoundary>
+          <Navbar />
           <Suspense fallback={<div>Loading</div>}>
-            <Navbar />
-            <Routes>
-              {/* FileRoutes is a component that renders a Route for each file in the routes directory. */}
-              <FileRoutes />
-            </Routes>
+            <CollectionProvider>
+              <Routes>
+                {/* FileRoutes is a component that renders a Route for each file in the routes directory. */}
+                <FileRoutes />
+              </Routes>
+            </CollectionProvider>
           </Suspense>
         </ErrorBoundary>
         <Scripts />

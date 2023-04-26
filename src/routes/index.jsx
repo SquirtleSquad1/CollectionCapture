@@ -1,9 +1,32 @@
 import axios from 'axios';
-import { For, createSignal } from "solid-js";
+import { LRUCache } from 'lru-cache';
+import { LocalStorage } from 'node-localstorage';
+import { For, createSignal, onCleanup, onMount } from "solid-js";
 import loading from '../assets/loading.gif';
-import Card from '~/components/Card';
+import { useCollectionContext } from '../context/CollectionContext';
+
+const localStorage = new LocalStorage('./scratch');
+
+const cache = new LRUCache({
+  max: 100,
+  maxAge: 1000 * 60 * 60 // Cache results for 1 hour
+});
+
+onMount(() => {
+  (function() {
+    const serializedCache = localStorage.getItem('myCache');
+    if (serializedCache) {
+      const json = JSON.parse(serializedCache);
+      cache.load(json);
+      console.log(`Loaded cache from local storage (${cache.itemCount()} items)`);
+    } else {
+      console.log('No cache found in local storage');
+    }
+  })();
+})
 
 const Index = () => {
+  const { cards, setCards } = useCollectionContext();
   const [search, setSearch] = createSignal('');
   const [data, setData] = createSignal(null);
   const [isLoading, setIsLoading] = createSignal(false);
@@ -12,17 +35,22 @@ const Index = () => {
   const handleSearch = async(event) => {
     event.preventDefault();
     setIsLoading(true);
-    const response = await axios.get('/api/getCards', {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        params: {
-          name: search().trim()
-        }
-    });
-    
-    setData(response.data.filter(card => card.imageUrl));
-    console.log(data())
+
+    // hash queryname
+    const queryKey = search().trim().toLowerCase().replace(/\s/g, '');
+    // check if query is in cache
+    if (!cache.has(queryKey)){
+      const response = await axios.get('/api/getCards', {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          params: {
+            name: search().trim()
+          }
+      });
+      cache.set(queryKey, response.data.filter(card => card.imageUrl))
+    }
+    setData(cache.get(queryKey));
     setIsLoading(false);
   }
   
@@ -39,15 +67,11 @@ const Index = () => {
         </form>
       <div class="flex mt-8">
         <div class="flex-2 flex-col justify-center self-center w-1/3 h-screen bg-slate-400 rounded-lg mr-4 p-4 overflow-y-auto">
-          {/* {
-            data() && Array.isArray(data()) ? (
-              <For each={data()}>{
-                (card) => (
-                  <div class='border-b-2 border-black w-full pb-2'>{card.name}</div>
-                )
-              } </For>
-            ) : <p>No card data</p>
-          } */}
+
+          {
+            cards().length > 0 ? <p>{JSON.stringify(cards())}</p> : <p>No cards</p>
+          }
+
         </div>
         <div class="flex-2 w-2/3 h-screen p-4 bg-slate-500 rounded-lg flex-wrap overflow-y-auto">
           {
@@ -55,6 +79,9 @@ const Index = () => {
               Array.isArray(data()) ? (
                 <For each={data()}>{
                   (card) => {
+                      const handleAddCard = () => {
+                        setCards((prevCards) => [...prevCards, card]);
+                      }
                       return (
                       <Card imageUrl={card.imageUrl} type={'search'} cardId={card.id}/>
                       )
@@ -68,5 +95,10 @@ const Index = () => {
     </main>
   )
 }
+
+onCleanup(() => {
+  localStorage.setItem('myCache', JSON.stringify(cache.dump()));
+})
+
 
 export default Index;
