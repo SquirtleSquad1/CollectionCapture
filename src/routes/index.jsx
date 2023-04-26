@@ -49,7 +49,7 @@ const Index = () => {
     setIsLoading(true);
 
     // hash queryname
-    const queryKey = search().trim().toLowerCase().replace(/\s/g, '');
+    const queryKey = `Query${search().trim().replace(/\s/g, '')}`;
     // check if query is in cache
     if (!cache.has(queryKey)){
       const response = await axios.get('/api/getCards', {
