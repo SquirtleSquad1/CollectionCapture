@@ -14,7 +14,13 @@ export default defineConfig({
     port: 8080,
     watch: {
       usePolling: true,
+    },
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+      }
     }
+    
   },
   ssr: {
     external: ["@prisma/client"],
