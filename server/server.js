@@ -38,7 +38,7 @@ app.get('/api/getCards', async (req, res) => {
   console.log(`Endpoint /api/getCards query: ${JSON.stringify(req.params)}`);
   const { name } = req.query;
   try {
-    const { name } = req.body;
+    // const { name } = req.body;
     const cardNames = await mtg.card.where({ name });
     return res.json(cardNames);
   } catch (error) {
