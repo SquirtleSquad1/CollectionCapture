@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "@prisma/client"
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient()
 
 export default {
@@ -19,7 +19,10 @@ export default {
         res.locals.userId = 'bad username/password'
       }
       return next()
-    }catch (e){
+    }
+    catch (err){
+      console.log(err)
+      return next("error in getUser middleware")
     }
   },
 
@@ -42,11 +45,9 @@ export default {
         })
       }
 
-    }catch (e){
-    }
-    
-    try {
-    }catch (e){
+    }catch (err){
+      console.log(err)
+      return next("error in postUser middleware")
     }
   },
 

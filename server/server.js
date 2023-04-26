@@ -45,10 +45,6 @@ app.get('/api/users', middleware.getUser, (req, res) => {
   return res.status(200).json(res.locals.userId)
 })
 
-app.post('/api/users', middleware.postUser, (req, res) => {
-  return res.status(200).json('got user')
-})
-
 app.post('/api/getCards', middleware.postCard, (req, res) => {
   return res.status(201).json('card created/updated');
 })

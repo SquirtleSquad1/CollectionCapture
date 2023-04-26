@@ -2,7 +2,7 @@ import axios from 'axios';
 import { createRouteAction, redirect } from 'solid-start';
 
 const Signup = () => {
-  const [_, { Form }] = createRouteAction(async (formData) => {
+  const [, { Form }] = createRouteAction(async (formData) => {
     const username = formData.get("username");
     const password = formData.get("password");
     const login = await axios.post('/user/login', {
